@@ -97,32 +97,37 @@ This mining user configuration was not found!
     const now = Date.now();
     if (now - timer > 100) {
       await sleep(1);
-      spinnies.update("mining", {
-        text: `[${dayjs(now).format(
-          "YYYY-MM-DD HH:mm:ss"
-        )}] ${mineCount} - ${predictedTransactionHash}`,
-        color: "red",
-      });
+      // spinnies.update("mining", {
+      //   text: `[${dayjs(now).format(
+      //     "YYYY-MM-DD HH:mm:ss"
+      //   )}] ${mineCount} - ${predictedTransactionHash}`,
+      //   color: "red",
+      // });
+      console.log(`[mining] ${mineCount} - ${predictedTransactionHash}`);
       timer = now;
     }
 
     if (predictedTransactionHash.includes(workc)) {
       unique = 0;
-      spinnies.succeed("mining", {
-        text: `${mineCount} - ${predictedTransactionHash}`,
-        color: "green",
-      });
+      // spinnies.succeed("mining", {
+      //   text: `${mineCount} - ${predictedTransactionHash}`,
+      //   color: "green",
+      // });
+      console.log(`[mining]succeed ${mineCount} - ${predictedTransactionHash}`);
       const mineTime = (Date.now() - startTimer) / 1000;
       printer.info(
         `Total time spent ${mineTime}s, average arithmetic ${Math.ceil(mineCount / mineTime)} c/s`
       );
       // console.log("🚀 ~ transaction:", transaction)
-      const realTransaction = await miner.sendTransaction(transaction);
-      // console.log("🚀 ~ realTransaction:", realTransaction)
-      printer.info(`mining hash: ${realTransaction.hash}`);
-      await realTransaction.wait();
-
-      return printer.info("mining success");
+      try {
+        const realTransaction = await miner.sendTransaction(transaction);
+        // console.log("🚀 ~ realTransaction:", realTransaction)
+        printer.info(`mining hash: ${realTransaction.hash}`);
+        // await realTransaction.wait();
+      } catch(err) {
+        console.log(err);
+      }
+      // return printer.info("mining success");
     }
     // await sleep(1)
   }
